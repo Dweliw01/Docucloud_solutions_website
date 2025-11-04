@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(conda create:*)",
+      "Bash(conda activate:*)",
+      "Bash(npm install:*)",
+      "Bash(mv:*)",
+      "Bash(find:*)",
+      "Bash(git init:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
