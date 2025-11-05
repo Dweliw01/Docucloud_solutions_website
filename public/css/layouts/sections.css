@@ -43,11 +43,16 @@ section.hero {
 
 .hero-illustration {
   width: 100%;
-  max-width: 550px;
+  max-width: 900px;
   height: auto;
   border-radius: var(--radius-lg);
-  animation: float 6s ease-in-out infinite;
   filter: drop-shadow(0 20px 40px rgba(37, 99, 235, 0.15));
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.hero-illustration:hover {
+  transform: scale(1.02);
+  filter: drop-shadow(0 25px 50px rgba(37, 99, 235, 0.2));
 }
 
 @keyframes float {
