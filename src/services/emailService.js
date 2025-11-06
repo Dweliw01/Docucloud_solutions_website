@@ -7,16 +7,25 @@ class EmailService {
   async sendAdminNotification(inquiry) {
     const msg = {
       to: config.email.notificationEmail,
-      from: config.email.from,
+      from: {
+        email: config.email.from,
+        name: 'DocuCloud Solutions'
+      },
+      replyTo: inquiry.email,
       subject: `New Inquiry: ${inquiry.name}${inquiry.company ? ` from ${inquiry.company}` : ''}`,
-      html: this.getAdminEmailTemplate(inquiry)
+      html: this.getAdminEmailTemplate(inquiry),
+      trackingSettings: {
+        clickTracking: { enable: false },
+        openTracking: { enable: false }
+      }
     };
 
     try {
+      console.log(`📧 Sending admin notification to: ${msg.to}`);
       await sgMail.send(msg);
-      console.log(`Admin notification sent for inquiry ${inquiry.id}`);
+      console.log(`✅ Admin notification sent for inquiry ${inquiry.id}`);
     } catch (error) {
-      console.error('Admin email error:', error);
+      console.error('❌ Admin email error:', error.response?.body || error);
       throw error;
     }
   }
@@ -25,16 +34,26 @@ class EmailService {
   async sendCustomerConfirmation(inquiry) {
     const msg = {
       to: inquiry.email,
-      from: config.email.from,
+      from: {
+        email: config.email.from,
+        name: 'DocuCloud Solutions'
+      },
+      replyTo: config.email.notificationEmail,
       subject: 'Thanks for reaching out to DocuCloud Solutions!',
-      html: this.getCustomerEmailTemplate(inquiry)
+      html: this.getCustomerEmailTemplate(inquiry),
+      text: this.getCustomerEmailTextVersion(inquiry),
+      trackingSettings: {
+        clickTracking: { enable: false },
+        openTracking: { enable: false }
+      }
     };
 
     try {
+      console.log(`📧 Sending customer confirmation to: ${inquiry.email}`);
       await sgMail.send(msg);
-      console.log(`Confirmation sent to ${inquiry.email}`);
+      console.log(`✅ Confirmation sent to ${inquiry.email}`);
     } catch (error) {
-      console.error('Customer email error:', error);
+      console.error('❌ Customer email error:', error.response?.body || error);
       throw error;
     }
   }
@@ -144,6 +163,33 @@ class EmailService {
       </body>
       </html>
     `;
+  }
+
+  // Plain text version of customer email (helps avoid spam)
+  getCustomerEmailTextVersion(inquiry) {
+    const firstName = inquiry.name.split(' ')[0];
+
+    return `
+Thank You, ${firstName}!
+
+We received your inquiry and appreciate you reaching out to DocuCloud Solutions.
+
+What happens next?
+- We'll review your inquiry within the next few hours
+- A team member will contact you within 24 hours
+- We'll schedule your free 15-minute automation consultation
+- You'll receive a customized automation strategy
+
+In the meantime, feel free to explore our case studies to see how we've helped businesses save 10-30 hours per week.
+
+Best regards,
+The DocuCloud Solutions Team
+
+---
+DocuCloud Solutions LLC
+Based in New York City | Serving businesses nationwide
+https://docucloudsolutions.com
+    `.trim();
   }
 }
 

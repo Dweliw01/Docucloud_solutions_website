@@ -121,7 +121,7 @@ if (contactForm) {
             }
         } catch (error) {
             console.error('Form submission error:', error);
-            alert('There was an error submitting your form. Please email us directly at info@docucloudsolutions.com');
+            alert('There was an error submitting your form. Please email us directly at info@docucloud.solutions');
         }
     });
 }
